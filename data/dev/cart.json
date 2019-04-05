@@ -1,1 +1,21 @@
-{"totalPrice":68000,"products":{"product-2019-04-04T21:39:01.323Z":10,"product-2019-04-04T21:39:12.592Z":4,"product-2019-04-04T21:39:25.446Z":4},"categories":{"category-2019-04-04T21:38:27.816Z":{"quantity":14,"totalPrice":48000,"maxDiscount":9600},"category-2019-04-04T21:38:48.104Z":{"quantity":4,"totalPrice":20000,"maxDiscount":0}},"delivery":55}
+{
+    "totalPrice": 68000,
+    "products": {
+        "product-2019-04-04T21:39:01.323Z": 10,
+        "product-2019-04-04T21:39:12.592Z": 4,
+        "product-2019-04-04T21:39:25.446Z": 4
+    },
+    "categories": {
+        "category-2019-04-04T21:38:27.816Z": {
+            "quantity": 14,
+            "totalPrice": 48000,
+            "maxDiscount": 9600
+        },
+        "category-2019-04-04T21:38:48.104Z": {
+            "quantity": 4,
+            "totalPrice": 20000,
+            "maxDiscount": 0
+        }
+    },
+    "delivery": 55
+}
