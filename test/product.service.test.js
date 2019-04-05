@@ -1,7 +1,7 @@
 const expect = require("chai").expect;
-const sinon = require("sinon");
 
 const db = require("../configs/db");
+const { PRODUCTS } = require("../configs/constants");
 
 const productService = require("../service/product.service");
 const Product = require("../models/product.model");
@@ -16,7 +16,7 @@ describe("Product Service", () => {
       productService
         .addProduct(new Product("Macbook Pro", 2000, "categoryId"))
         .then(() => {
-          return productService.fetchAll();
+          return db.readFile(PRODUCTS);
         })
         .then(products => {
           expect(products).to.have.lengthOf(1);
@@ -32,7 +32,7 @@ describe("Product Service", () => {
       productService
         .addProduct(new Product("Macbook Pro", 2000, "categoryId"))
         .then(() => {
-          return productService.fetchAll();
+          return db.readFile(PRODUCTS);
         })
         .then(products => {
           expect(products[0].price).to.be.a("number");
@@ -61,7 +61,7 @@ describe("Product Service", () => {
       productService
         .addProduct(new Product("Macbook Pro", 2000, "categoryId"))
         .then(() => {
-          return productService.fetchAll();
+          return db.readFile(PRODUCTS);
         })
         .then(products => {
           return productService.findProductById(products[0].id);
@@ -75,7 +75,7 @@ describe("Product Service", () => {
         .catch(done);
     });
 
-    it("return null id product is not exist", done => {
+    it("return null if product is not exist", done => {
       productService
         .findProductById("some-id")
         .then(product => {
@@ -90,7 +90,7 @@ describe("Product Service", () => {
       productService
         .addProduct(new Product("Macbook Pro", 2000, "categoryId"))
         .then(() => {
-          return productService.fetchAll();
+          return db.readFile(PRODUCTS);
         })
         .then(products => {
           expect(products).to.be.lengthOf(1);
@@ -106,7 +106,7 @@ describe("Product Service", () => {
       productService
         .writeFile(array)
         .then(() => {
-          return productService.fetchAll();
+          return db.readFile(PRODUCTS);
         })
         .then(products => {
           expect(products[0].title).to.equal("Macbook Pro");
@@ -119,7 +119,7 @@ describe("Product Service", () => {
   });
 
   afterEach(done => {
-    db.writeFile("products", []);
+    db.writeFile(PRODUCTS, []);
     done();
   });
 });

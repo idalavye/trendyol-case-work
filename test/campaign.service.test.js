@@ -1,6 +1,7 @@
 const expect = require("chai").expect;
 
 const db = require("../configs/db");
+const { CAMPAIGNS } = require("../configs/constants");
 
 const campaignService = require("../service/campaign.service");
 const Campaign = require("../models/campaign.model");
@@ -15,7 +16,7 @@ describe("Campaign Service", function() {
       campaignService
         .save(new Campaign("categoryId", 50, 5, "rate"))
         .then(() => {
-          return campaignService.fetchAll();
+          return db.readFile(CAMPAIGNS);
         })
         .then(campaigns => {
           expect(campaigns).to.have.lengthOf(1);
@@ -37,11 +38,12 @@ describe("Campaign Service", function() {
       campaignService
         .save(new Campaign("categoryId", 50, 5, "rate"))
         .then(() => {
-          return db.readFile("campaigns").then(campaigns => {
-            expect(campaigns[0].discount).to.be.a("number");
-            expect(campaigns[0].minQuantity).to.be.a("number");
-            done();
-          });
+          return db.readFile(CAMPAIGNS);
+        })
+        .then(campaigns => {
+          expect(campaigns[0].discount).to.be.a("number");
+          expect(campaigns[0].minQuantity).to.be.a("number");
+          done();
         })
         .catch(done);
     });
@@ -52,16 +54,17 @@ describe("Campaign Service", function() {
       campaignService
         .save(new Campaign("categoryId", 50, 5, "rate"))
         .then(() => {
-          return db.readFile("campaigns").then(campaigns => {
-            expect(campaigns).to.have.lengthOf(1);
-            done();
-          });
+          return db.readFile(CAMPAIGNS);
+        })
+        .then(campaigns => {
+          expect(campaigns).to.have.lengthOf(1);
+          done();
         })
         .catch(done);
     });
   });
   afterEach(function(done) {
-    db.writeFile("campaigns", []);
+    db.writeFile(CAMPAIGNS, []);
     done();
   });
 });

@@ -1,10 +1,15 @@
 const db = require("../configs/db");
+const { COUPON } = require("../configs/constants");
 
 const cartService = require("./cart.service");
 const discountType = require("../models/discount-type");
 
 exports.addCoupon = coupon => {
-  if (isNaN(coupon.minPrice) || isNaN(coupon.discount)) {
+  if (
+    isNaN(coupon.minPrice) ||
+    isNaN(coupon.discount) ||
+    (!coupon.minPrice || !coupon.discount)
+  ) {
     throw new Error("Please enter a valid minPrice and discout");
   }
 
@@ -56,9 +61,9 @@ exports.applyCoupons = () => {
 };
 
 exports.save = coupons => {
-  return db.writeFile("coupons", coupons);
+  return db.writeFile(COUPON, coupons);
 };
 
 exports.fetchAll = () => {
-  return db.readFile("coupons");
+  return db.readFile(COUPON);
 };

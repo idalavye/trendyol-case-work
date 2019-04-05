@@ -1,6 +1,7 @@
 const expect = require("chai").expect;
+
 const db = require("../configs/db");
-const sinon = require("sinon");
+const { CATEGORIES } = require("../configs/constants");
 
 const categoryService = require("../service/category.service");
 const Category = require("../models/category.model");
@@ -15,7 +16,7 @@ describe("Category Service", function() {
       categoryService
         .addCategory(new Category("Apple"))
         .then(() => {
-          return categoryService.fetchAll();
+          return db.readFile(CATEGORIES);
         })
         .then(categories => {
           expect(categories).to.have.lengthOf(1);
@@ -30,7 +31,7 @@ describe("Category Service", function() {
       categoryService
         .addCategory(new Category("Apple"))
         .then(() => {
-          return categoryService.fetchAll();
+          return db.readFile(CATEGORIES);
         })
         .then(categories => {
           expect(categories[0].title).to.equal("Apple");
@@ -46,7 +47,7 @@ describe("Category Service", function() {
           return categoryService.addCategory(new Category("Apple"));
         })
         .then(() => {
-          return categoryService.fetchAll();
+          return db.readFile(CATEGORIES);
         })
         .then(categories => {
           expect(categories).to.have.lengthOf(1);
@@ -65,7 +66,7 @@ describe("Category Service", function() {
       categoryService
         .addCategory(new Category("Apple"))
         .then(() => {
-          return categoryService.fetchAll();
+          return db.readFile(CATEGORIES);
         })
         .then(categories => {
           expect(categories[0].title).to.equal("Apple");
@@ -80,7 +81,7 @@ describe("Category Service", function() {
       categoryService
         .addCategory(new Category("Apple"))
         .then(() => {
-          return db.readFile("categories");
+          return db.readFile(CATEGORIES);
         })
         .then(categories => {
           return categoryService.findCategoryById(categories[0].id);
@@ -136,7 +137,7 @@ describe("Category Service", function() {
     });
   });
   afterEach(function(done) {
-    db.writeFile("categories", []);
+    db.writeFile(CATEGORIES, []);
     done();
   });
 });

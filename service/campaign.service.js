@@ -1,4 +1,5 @@
 const db = require("../configs/db");
+const { CAMPAIGNS } = require("../configs/constants");
 
 exports.save = campaign => {
   if (
@@ -17,10 +18,10 @@ exports.save = campaign => {
   }
 
   return db
-    .readFile("campaigns")
+    .readFile(CAMPAIGNS)
     .then(campaigns => {
       campaigns.push(campaign);
-      db.writeFile("campaigns", campaigns);
+      db.writeFile(CAMPAIGNS, campaigns);
     })
     .catch(err => {
       console.log(err);
@@ -28,7 +29,7 @@ exports.save = campaign => {
 };
 
 exports.fetchAll = () => {
-  return db.readFile("campaigns").then(campaigns => {
+  return db.readFile(CAMPAIGNS).then(campaigns => {
     return campaigns;
   });
 };

@@ -1,4 +1,5 @@
 const db = require("../configs/db");
+const { CART } = require("../configs/constants");
 
 const campaignService = require("../service/campaign.service");
 const discountType = require("../models/discount-type");
@@ -33,7 +34,7 @@ exports.addItem = (product, quantity) => {
       cart.categories[product.categoryId].totalPrice +=
         +product.price * quantity;
     }
-    db.writeFile("cart", cart);
+    db.writeFile(CART, cart);
   });
 };
 
@@ -71,7 +72,7 @@ exports.applyDiscounts = () => {
       return this.saveCategoriesWitDiscounts(categories);
     })
     .then(() => {
-      // console.log("\n Discounts applied");
+      return "\n Discounts applied";
     })
     .catch(err => console.log(err));
 };
@@ -94,6 +95,10 @@ exports.getTotalAmountAfterDiscounts = () => {
       return this.fetchAll();
     })
     .then(cart => {
+      if (!cart) {
+        throw new Error("Cart is Empty");
+      }
+
       const categories = cart.categories;
       let totalDiscount = 0;
       for (const item in categories) {
@@ -175,18 +180,28 @@ exports.cartPrint = () => {
           totalPrice +
           " TL" +
           "\n  Total Discount (coupon,campaign): " +
-          result +
+          result.price +
           " TL" +
           "\n  Delivery Price : " +
           deliveryPrice +
           " TL" +
           "\n"
       );
+
+      console.log(
+        "----------> Price : " +
+          (totalPrice - result.price + deliveryPrice) +
+          " TL"
+      );
     });
   });
 };
 
 exports.saveDelivery = deliveryPrice => {
+  if (isNaN(deliveryPrice)) {
+    throw new Error("Delivery Price is not a number");
+  }
+
   return this.fetchAll().then(cart => {
     cart.delivery = +deliveryPrice;
     return this.saveCart(cart);
@@ -194,11 +209,11 @@ exports.saveDelivery = deliveryPrice => {
 };
 
 exports.saveCart = cart => {
-  return db.writeFile("cart", cart);
+  return db.writeFile(CART, cart);
 };
 
 exports.fetchAll = () => {
-  return db.readFile("cart").then(cart => {
+  return db.readFile(CART).then(cart => {
     if (cart.length === 0) {
       cart = { totalPrice: 0, products: {}, categories: {}, delivery: 0 };
       return cart;

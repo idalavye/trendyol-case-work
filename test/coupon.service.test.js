@@ -2,6 +2,7 @@ const expect = require("chai").expect;
 const sinon = require("sinon");
 
 const db = require("../configs/db");
+const { COUPON } = require("../configs/constants");
 
 const couponService = require("../service/coupon.service");
 const cartService = require("../service/cart.service");
@@ -60,7 +61,7 @@ describe("Coupon Service", function() {
       couponService
         .addCoupon(new Coupon(100, 50, "rate"))
         .then(() => {
-          return couponService.fetchAll();
+          return db.readFile(COUPON);
         })
         .then(coupons => {
           expect(coupons).to.have.lengthOf(1);
@@ -81,7 +82,7 @@ describe("Coupon Service", function() {
       couponService
         .addCoupon(new Coupon(100, 20, "rate"))
         .then(() => {
-          return couponService.fetchAll();
+          return db.readFile(COUPON);
         })
         .then(coupons => {
           expect(coupons[0].minPrice).to.be.a("number");
@@ -114,7 +115,7 @@ describe("Coupon Service", function() {
     });
   });
   afterEach(done => {
-    db.writeFile("coupons", []);
+    db.writeFile(COUPON, []);
     done();
   });
 });

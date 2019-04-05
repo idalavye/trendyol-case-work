@@ -19,16 +19,18 @@ const p = pathName => {
 
 exports.readFile = path => {
   const promise = new Promise((resolve, reject) => {
-    fs.readFile(p(path), (err, fileContent) => {
-      if (err) {
-        reject(err);
-      }
-      try {
-        resolve(JSON.parse(fileContent));
-      } catch (error) {
-        resolve([]);
-      }
-    });
+    setTimeout(() => {
+      fs.readFile(p(path), (err, fileContent) => {
+        if (err) {
+          reject(err);
+        }
+        try {
+          resolve(JSON.parse(fileContent));
+        } catch (error) {
+          resolve([]);
+        }
+      });
+    }, 50);
   });
   return promise;
 };

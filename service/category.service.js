@@ -1,4 +1,5 @@
 const db = require("../configs/db");
+const { CATEGORIES } = require("../configs/constants");
 
 exports.addCategory = category => {
   if (!category.title) {
@@ -25,11 +26,11 @@ exports.addCategory = category => {
 };
 
 exports.fetchAll = () => {
-  return db.readFile("categories");
+  return db.readFile(CATEGORIES);
 };
 
 exports.writeFile = categories => {
-  return db.writeFile("categories", categories);
+  return db.writeFile(CATEGORIES, categories);
 };
 
 exports.findCategoryById = categoryId => {

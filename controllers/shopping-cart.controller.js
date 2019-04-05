@@ -8,11 +8,12 @@ exports.addToProductShoppingCart = async (product, amount) => {
 };
 
 exports.applyDiscounts = async () => {
-  await cartService.applyDiscounts();
+  const result = await cartService.applyDiscounts();
+  console.log(result);
 };
 
 exports.printCart = async () => {
-  console.log("\nPlease firstly calculate the delivery.... :\n");
+  console.log("\nPlease firstly calculate the delivery.... \n");
   await deliveryController.deliveryCostCalculate();
   await cartService.cartPrint();
 };

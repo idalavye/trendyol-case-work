@@ -1,7 +1,8 @@
 const db = require("../configs/db");
+const { PRODUCTS } = require("../configs/constants");
 
 exports.addProduct = product => {
-  if (isNaN(product.price)) {
+  if (isNaN(product.price) || !product.price) {
     throw new Error("Please enter a valid price");
   }
 
@@ -27,9 +28,9 @@ exports.findProductById = productId => {
 };
 
 exports.fetchAll = () => {
-  return db.readFile("products");
+  return db.readFile(PRODUCTS);
 };
 
 exports.writeFile = product => {
-  return db.writeFile("products", product);
+  return db.writeFile(PRODUCTS, product);
 };

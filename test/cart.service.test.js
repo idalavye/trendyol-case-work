@@ -2,6 +2,7 @@ const expect = require("chai").expect;
 const sinon = require("sinon");
 
 const db = require("../configs/db");
+const { CART } = require("../configs/constants");
 
 const deliveryService = require("../service/delivery.service");
 const cartService = require("../service/cart.service");
@@ -10,7 +11,7 @@ const Product = require("../models/product.model");
 
 describe("Cart Service", () => {
   beforeEach(done => {
-    db.writeFile("cart", {
+    db.writeFile(CART, {
       totalPrice: 100,
       products: {
         "product-1": 5,
@@ -27,7 +28,8 @@ describe("Cart Service", () => {
           totalPrice: 50,
           maxDiscount: 0
         }
-      }
+      },
+      delivery: 0
     });
     done();
   });
@@ -52,8 +54,7 @@ describe("Cart Service", () => {
         cartService.addItem(new Product());
         done();
       } catch (err) {
-        cartService
-          .fetchAll()
+        db.readFile(CART)
           .then(cart => {
             expect(Object.keys(cart.products)).to.have.lengthOf(2);
             done();
@@ -67,8 +68,7 @@ describe("Cart Service", () => {
         cartService.addItem(new Product("Macbook Pro", "200", "category-3"));
         done();
       } catch (err) {
-        cartService
-          .fetchAll()
+        db.readFile(CART)
           .then(cart => {
             expect(Object.keys(cart.products)).to.have.lengthOf(2);
             done();
@@ -101,7 +101,7 @@ describe("Cart Service", () => {
       cartService
         .saveCategoriesWitDiscounts(categories)
         .then(() => {
-          return cartService.fetchAll();
+          return db.readFile(CART);
         })
         .then(cart => {
           expect(cart.categories["category-3"].maxDiscount).to.equal(20);
@@ -154,7 +154,6 @@ describe("Cart Service", () => {
           });
         })
       );
-
       cartService
         .getTotalAmountAfterDiscounts()
         .then(result => {
@@ -162,8 +161,84 @@ describe("Cart Service", () => {
           done();
         })
         .catch(done);
-
       cartService.applyDiscounts.restore();
+    });
+  });
+
+  //   describe("cartPrint", () => {
+  //     it("throw an error if cart is null", () => {
+  //       sinon.stub(cartService, "fetchAll");
+  //       cartService.fetchAll.returns(null);
+  //       expect(cartService.cartPrint.bind(this)).to.throw;
+  //       cartService.fetchAll.restore();
+  //     });
+  //   });
+
+  describe("saveDelivery", () => {
+    it("delivery should be save to database correctly", done => {
+      cartService
+        .saveDelivery(45)
+        .then(() => {
+          return db.readFile(CART);
+        })
+        .then(cart => {
+          expect(cart.delivery).to.equal(45);
+          done();
+        })
+        .catch(done);
+    });
+
+    it("delivery price must be number otherwise dont should be save to database", done => {
+      try {
+        cartService.saveDelivery("test");
+      } catch (err) {
+        cartService
+          .fetchAll()
+          .then(cart => {
+            expect(cart.delivery).to.equal(0);
+            done();
+          })
+          .catch(done);
+      }
+    });
+  });
+
+  describe("saveCart", () => {
+    it("cart should be save to the database correctly", done => {
+      cartService
+        .fetchAll()
+        .then(cart => {
+          cart.totalPrice = 0;
+          cart.products = {};
+          cart.categories = {};
+          cart.delivery = 0;
+          return cartService.saveCart(cart);
+        })
+        .then(() => {
+          return cartService.fetchAll();
+        })
+        .then(cart => {
+          expect(cart.totalPrice).to.equal(0);
+          expect(cart.products).to.be.empty;
+          expect(cart.categories).to.be.empty;
+          expect(cart.delivery).to.equal(0);
+          done();
+        })
+        .catch(done);
+    });
+  });
+
+  describe("fetchall", () => {
+    it("should be fetched the cart correctly", done => {
+      db.readFile(CART)
+        .then(cart => {
+          expect(cart.totalPrice).to.equal(100);
+          expect(Object.keys(cart.products).length).to.equal(2);
+          expect(Object.keys(cart.categories).length).to.equal(2);
+          expect(cart.delivery).to.equal(0);
+          done();
+        })
+        .catch(done);
     });
   });
 });
